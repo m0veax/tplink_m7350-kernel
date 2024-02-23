@@ -1,4 +1,14 @@
-	Linux kernel release 3.x <http://kernel.org/>
+# Notes
+
+We are working on a vendor Kernel for the TP-Link M7350 V3 here. We grabed the Sources from the TP-Link GPL Section and started patching to get it building with a modern Toolchain.
+
+You can find more of our insights about the TP-Link M7350 here:
+
+https://github.com/m0veax/tplink_m7350
+
+# Original README
+
+Linux kernel release 3.x <http://kernel.org/>
 
 These are the release notes for Linux version 3.  Read them carefully,
 as they tell you what this is all about, explain how to install the
