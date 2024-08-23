@@ -944,3 +944,5 @@ static inline void mdp_vid_quant_set(void)
 }
 #endif
 #endif /* MDP_H */
+
+int mdp_hist_lut_destroy(void);

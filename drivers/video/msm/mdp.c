@@ -1711,6 +1711,7 @@ void mdp_pipe_ctrl(MDP_BLOCK_TYPE block, MDP_BLOCK_POWER_STATE state,
 void mdp_pipe_ctrl(MDP_BLOCK_TYPE block, MDP_BLOCK_POWER_STATE state,
 		   boolean isr)
 {
+#ifdef MDP_HW_VSYNC // FIXME
 	boolean mdp_all_blocks_off = TRUE;
 	int i;
 	unsigned long flag;
@@ -1868,6 +1869,7 @@ void mdp_pipe_ctrl(MDP_BLOCK_TYPE block, MDP_BLOCK_POWER_STATE state,
 		}
 		up(&mdp_pipe_ctrl_mutex);
 	}
+#endif // MDP_HW_VSYNC
 }
 
 void mdp_clk_ctrl(int on)
