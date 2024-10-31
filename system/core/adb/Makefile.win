@@ -1,0 +1,124 @@
+##########################################################################
+# Makefile for compiling under Windows/Cygwin
+#
+# Compilation instructions:
+#
+#   Requirements:
+#     - Cygwin with development GCC packages
+#     - optionally, MinGW with libz if compiling for MinGW
+#
+#   Files from Android tree:
+#     system/core/adb
+#     development/host/windows
+#     system/core/include
+#     system/core/libzipfile
+#     system/core/libcutils
+#
+#   To compile:
+#     Set USE_CYGWIN below based on Cygwin vs MinGW compile
+#     make -f Makefile.win clean
+#     make -f Makefile.win
+#
+#   To create zip file of all Android components needed for
+#   compiling ADB on Windows-Cygwin:
+#     make -f Makefile.win dev-pkg
+#
+# The resulting fastboot.exe binary requires AdbWinApi.dll
+# in development/host/windows/prebuilt/usb.
+
+
+# Define USE_CYGWIN to compile against Cygwin.
+# The MinGW (non-Cygwin) version has 2 issues:
+#  1) Need to issue "adb kill-server" after
+#     phone reset
+#  2) Issuing Ctrl-C in adb shell exits back
+#     to host system
+# The Cygwin version does not have the above
+# issues; however, it requires cygwin1.dll
+# at runtime.
+USE_CYGWIN := 0
+
+SRC_FILES := \
+	adb.c \
+	console.c \
+	transport.c \
+	transport_local.c \
+	transport_usb.c \
+	commandline.c \
+	adb_client.c \
+	sockets.c \
+	services.c \
+	file_sync_client.c \
+	get_my_path_windows.c \
+	usb_windows.c \
+	utils.c \
+	usb_vendors.c \
+	../libzipfile/centraldir.c \
+	../libzipfile/zipfile.c \
+	../libcutils/socket_local_client.c
+
+ifeq ($(USE_CYGWIN), 1)
+CC := gcc
+SRC_FILES += \
+	fdevent.c \
+	../libcutils/socket_loopback_server.c \
+	../libcutils/socket_loopback_client.c \
+	../libcutils/socket_network_client.c \
+	../libcutils/socket_inaddr_any_server.c
+else
+CC := gcc-3
+SRC_FILES += \
+	sysdeps_win32.c
+endif
+
+INCS := \
+	-I/usr/include/w32api/ddk \
+	-I../../../development/host/windows/usb/api \
+	-I../include \
+	-I../libzipfile \
+	-I.
+
+DIRECT_INCS := \
+	-include ../include/arch/windows/AndroidConfig.h
+
+LIB_PATH := \
+	-L../../../development/host/windows/prebuilt/usb
+
+LIBS := \
+	-lz \
+	-lws2_32 \
+	../../../development/host/windows/prebuilt/usb/AdbWinApi.a
+
+ifeq ($(USE_CYGWIN), 1)
+LIBS += \
+	-lpthread
+endif
+
+CFLAGS := \
+	-O2 -DADB_HOST=1 -Wall -Wno-unused-parameter \
+	-D_XOPEN_SOURCE -D_GNU_SOURCE
+
+ifneq ($(USE_CYGWIN), 1)
+CFLAGS += \
+	-mno-cygwin
+endif
+
+adb: $(SRC_FILES)
+	$(CC) $(CFLAGS) $(INCS) -o $@ $(SRC_FILES) $(DIRECT_INCS) $(LIB_PATH) $(LIBS)
+	@cp ../../../development/host/windows/prebuilt/usb/AdbWinApi.dll .
+
+clean:
+	@rm -f adb.exe AdbWinApi.dll
+
+dev-pkg: adb-win.zip
+
+adb-win.zip:
+	@(cd ../../..; \
+	rm -f $@; \
+	zip -r $@ \
+		system/core/adb/ \
+		system/core/libcutils/ \
+		system/core/libzipfile/ \
+		system/core/include/ \
+		development/host/windows/;)
+	@echo -e "\n$@ generated in Android root directory\n"

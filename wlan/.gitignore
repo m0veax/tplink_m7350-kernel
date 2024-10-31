@@ -1,0 +1,10 @@
+.*.swp
+.*.swo
+*.o
+*.ko
+*.so
+*.lib
+tags
+TAGS
+cscope.*
+ncscope.*

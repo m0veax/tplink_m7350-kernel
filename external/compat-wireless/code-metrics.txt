@@ -1,0 +1,16 @@
+
+[36mcompat-drivers code metrics[00m
+
+[35m    836793[00m - Total upstream lines of code being pulled
+[01;32m      1481[00m - backport code changes
+[01;32m      1200[00m - backport code additions
+[01;32m       281[00m - backport code deletions
+[01;32m     12556[00m - backport from compat module
+[01;32m     14037[00m - total backport code
+[31m    1.6775[00m - % of code consists of backport work
+
+Base tree: [01;32math6kl-mdm.git[00m
+Base tree version: [35mv3.0-58275-gbf074b3[00m
+compat.git: [36mcompat-2012-09-18[00m
+compat-drivers release: [01;33mcompat-drivers-2012-09-18-7-gc629694[00m
+Code metrics archive: [01;32mhttp://bit.ly/H6BTF7[00m
